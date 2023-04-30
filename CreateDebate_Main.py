@@ -31,10 +31,7 @@ from Logger import Logger
 import sys
 
 type = sys.getfilesystemencoding()
-sys.stdout = Logger(r"D:\HKU\MM2023\data\CreateDebates\stance\stem_createdebate.txt")
-
-print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
+sys.stdout = Logger(r".\stem_createdebate.txt")
 
 
 pasre_strategy = {
@@ -51,7 +48,7 @@ pasre_strategy = {
     "branch":"branch",
     }
 
-df = pd.read_csv(r'D:\HKU\MM2023\data\CreateDebates\stance\branch_create_debate.csv')
+df = pd.read_csv(r'.\branch_create_debate.csv')
 
 sub_convs = []
 parser = DataFrameConversationReader(pasre_strategy)
@@ -190,85 +187,48 @@ print(f"number of conversations with insufficient labeled authors: {len(insuffic
 print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
 
-# topics = ['abortion', 'gayRights', 'obama', 'marijuana']
-# for test_topic in topics:
-#
-#     print("Topic: " +test_topic)
-#
-#     for predictor in ["core", "full"]:
-    #     all_true, all_pred = [], []
-    #     all_true_best, all_pred_best = [], []
-    #
-    #     accuracies = []
-    #     best_accuracies = []
-    #     for conv_id, predictions in author_predictions.items():
-    #         conv = convs_by_id[conv_id]
-    #         topic = conv.root.message.topic
-    #         if topic != test_topic:
-    #             continue
-    #         author_labels = get_authors_labels_in_conv(conv, author_labels_per_conversation)
-    #         author_preds = predictions.get(predictor, None)
-    #         if author_preds is None: continue
-    #
-    #         y_true, y_pred = align_gs_with_predictions(author_labels, author_preds)
-    #         all_true.extend(y_true)
-    #         all_pred.extend(y_pred)
-    #         accuracies.append(accuracy_score(y_true, y_pred))
-    #
-    #         best_preds = get_best_preds(author_labels, author_preds)
-    #         y_true, y_pred = align_gs_with_predictions(author_labels, best_preds)
-    #         all_true_best.extend(y_true)
-    #         all_pred_best.extend(y_pred)
-    #         best_accuracies.append(accuracy_score(y_true, y_pred))
-    #
-    #
-    #     print(f"Showing results of predictor: {predictor}")
-    #     print("acc ---- (macro):", np.mean(accuracies))
-    #     print("acc best (macro):", np.mean(best_accuracies))
-    #     print("acc ---- (micro):", accuracy_score(all_true, all_pred))
-    #     print("acc best (micro):", accuracy_score(all_true_best, all_pred_best))
-    #
-    #     print(classification_report(all_true, all_pred))
-    #     print(f"\n\t\tResults for best partition (regardless for stance assignment")
-    #     print(classification_report(all_true_best, all_pred_best))
+topics = ['abortion', 'gayRights', 'obama', 'marijuana']
+for test_topic in topics:
 
+    print("Topic: " +test_topic)
 
-for predictor in ["core", "full"]:
-    print(f"Showing Overall results of predictor: {predictor}")
+    for predictor in ["core", "full"]:
+        all_true, all_pred = [], []
+        all_true_best, all_pred_best = [], []
+    
+        accuracies = []
+        best_accuracies = []
+        for conv_id, predictions in author_predictions.items():
+            conv = convs_by_id[conv_id]
+            topic = conv.root.message.topic
+            if topic != test_topic:
+                continue
+            author_labels = get_authors_labels_in_conv(conv, author_labels_per_conversation)
+            author_preds = predictions.get(predictor, None)
+            if author_preds is None: continue
+    
+            y_true, y_pred = align_gs_with_predictions(author_labels, author_preds)
+            all_true.extend(y_true)
+            all_pred.extend(y_pred)
+            accuracies.append(accuracy_score(y_true, y_pred))
+    
+            best_preds = get_best_preds(author_labels, author_preds)
+            y_true, y_pred = align_gs_with_predictions(author_labels, best_preds)
+            all_true_best.extend(y_true)
+            all_pred_best.extend(y_pred)
+            best_accuracies.append(accuracy_score(y_true, y_pred))
+    
+    
+        print(f"Showing results of predictor: {predictor}")
+        print("acc ---- (macro):", np.mean(accuracies))
+        print("acc best (macro):", np.mean(best_accuracies))
+        print("acc ---- (micro):", accuracy_score(all_true, all_pred))
+        print("acc best (micro):", accuracy_score(all_true_best, all_pred_best))
+    
+        print(classification_report(all_true, all_pred))
+        print(f"\n\t\tResults for best partition (regardless for stance assignment")
+        print(classification_report(all_true_best, all_pred_best))
 
-    print("---------------------------------------------------")
-    # print("Topic: " +test_topic)
-    all_true, all_pred = [], []
-    all_true_best, all_pred_best = [], []
-    accuracies = []
-    best_accuracies = []
-    for conv_id, predictions in author_predictions.items():
-        conv = convs_by_id[conv_id]
-        topic = conv.root.message.topic
-        # if topic != test_topic:
-        #     continue
-        author_labels = get_authors_labels_in_conv(conv, author_labels_per_conversation)
-        author_preds = predictions.get(predictor, None)
-        if author_preds is None: continue
-
-        posts_true, posts_preds = get_posts_preds(conv, post_labels, author_preds)
-
-        y_true, y_pred = align_gs_with_predictions(posts_true, posts_preds)
-        all_true.extend(y_true)
-        all_pred.extend(y_pred)
-        accuracies.append(accuracy_score(y_true, y_pred))
-
-        best_preds = get_best_preds(posts_true, posts_preds)
-        y_true, y_pred = align_gs_with_predictions(posts_true, best_preds)
-        all_true_best.extend(y_true)
-        all_pred_best.extend(y_pred)
-        best_accuracies.append(accuracy_score(y_true, y_pred))
-
-    print("acc ---- (macro):", np.mean(accuracies))
-    print("acc best (macro):", np.mean(best_accuracies))
-    print("acc ---- (micro):", accuracy_score(all_true, all_pred))
-    print("acc best (micro):", accuracy_score(all_true_best, all_pred_best))
-    print("---------------------------------------------------")
 
 topics = ['abortion', 'gayRights', 'obama', 'marijuana']
 
@@ -304,13 +264,11 @@ for predictor in ["core", "full"]:
             all_pred_best.extend(y_pred)
             best_accuracies.append(accuracy_score(y_true, y_pred))
 
-        # print("acc ---- (macro):", np.mean(accuracies))
-        # print("acc best (macro):", np.mean(best_accuracies))
+        print("acc ---- (macro):", np.mean(accuracies))
+        print("acc best (macro):", np.mean(best_accuracies))
         print("acc ---- (micro):", accuracy_score(all_true, all_pred))
         print("acc best (micro):", accuracy_score(all_true_best, all_pred_best))
         print("---------------------------------------------------")
-
-
-    # print(classification_report(all_true, all_pred))
-    # print(f"\n\tResults for best partition (regardless for stance assignment")
-    # print(classification_report(all_true_best, all_pred_best))
+        print(classification_report(all_true, all_pred))
+        print(f"\n\tResults for best partition (regardless for stance assignment")
+        print(classification_report(all_true_best, all_pred_best))
