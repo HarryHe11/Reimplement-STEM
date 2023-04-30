@@ -150,11 +150,6 @@ def branch_process(df):
 
 branch_process(df)
 
-
-# print("Top_ids ", set(Top_ids))
-# print(len(list(set(Top_ids))))
-
-# print("not_found_ids ", set(not_found_ids))
-# print(len(list(set(not_found_ids))))
+ 
 df.info()
 df.to_csv(data_root_dir+"/branch_create_debate.csv", index=False)
